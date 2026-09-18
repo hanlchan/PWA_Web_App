@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import { parsePublicEnv } from "./env";
@@ -37,5 +40,13 @@ describe("parsePublicEnv", () => {
       ...withoutSiteUrl,
       NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
     });
+  });
+
+  it("reads runtime public values through direct process environment accesses", () => {
+    const source = readFileSync(resolve(process.cwd(), "src/lib/env.ts"), "utf8");
+
+    expect(source).toContain("NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL");
+    expect(source).toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY");
+    expect(source).toContain("NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL");
   });
 });

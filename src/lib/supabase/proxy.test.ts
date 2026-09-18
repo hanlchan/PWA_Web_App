@@ -52,6 +52,42 @@ describe("updateSession", () => {
     expect(response.headers.get("location")).toBeNull();
   });
 
+  it("propagates every refreshed cookie and its options on an authenticated continuing response", async () => {
+    mocks.getUser.mockImplementation(async () => {
+      mocks.setAll?.([
+        {
+          name: "sb-access-token",
+          value: "new-access-token",
+          options: { httpOnly: true, path: "/", sameSite: "lax" },
+        },
+        {
+          name: "sb-refresh-token",
+          value: "new-refresh-token",
+          options: { httpOnly: true, path: "/", sameSite: "strict", secure: true },
+        },
+      ]);
+      return { data: { user: { id: "user-1" } }, error: null };
+    });
+
+    const response = await updateSession(requestFor("/settings/profile"));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
+    expect(response.cookies.get("sb-access-token")).toMatchObject({
+      value: "new-access-token",
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+    });
+    expect(response.cookies.get("sb-refresh-token")).toMatchObject({
+      value: "new-refresh-token",
+      httpOnly: true,
+      path: "/",
+      sameSite: "strict",
+      secure: true,
+    });
+  });
+
   it("keeps auth pages accessible to anonymous visitors", async () => {
     const response = await updateSession(requestFor("/login"));
 

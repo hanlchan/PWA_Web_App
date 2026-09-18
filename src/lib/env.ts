@@ -17,5 +17,9 @@ export function parsePublicEnv(environment: Record<string, string | undefined>):
 }
 
 export function getPublicEnv(): PublicEnv {
-  return parsePublicEnv(process.env);
+  return parsePublicEnv({
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+  });
 }

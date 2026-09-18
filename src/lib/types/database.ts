@@ -37,6 +37,12 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      checkins: {
+        Row: { id: string; user_id: string; occurrence_id: string | null; checkin_date: string; completed_at: string; duration_minutes: number | null; activity_text: string | null; notes: string | null; is_backfilled: boolean; created_at: string; updated_at: string };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -48,6 +54,11 @@ export type Database = {
       update_workout_plan: { Args: { p_plan_id: string; p_payload: Json }; Returns: string };
       delete_workout_plan: { Args: { p_plan_id: string }; Returns: undefined };
       reschedule_future_notifications: { Args: { p_user_id: string }; Returns: undefined };
+      complete_occurrence: { Args: { p_occurrence_id: string }; Returns: string };
+      create_manual_checkin: { Args: { p_checkin_date: string; p_is_backfilled: boolean }; Returns: string };
+      update_checkin_details: { Args: { p_checkin_id: string; p_duration_minutes: number | null; p_activity_text: string; p_notes: string }; Returns: undefined };
+      undo_checkin: { Args: { p_checkin_id: string }; Returns: undefined };
+      get_today_dashboard: { Args: Record<never,never>; Returns: Json };
     };
     Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled" };
     CompositeTypes: Record<never, never>;

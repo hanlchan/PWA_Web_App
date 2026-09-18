@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./src",
-  testMatch: "**/*.e2e.ts",
+  testDir: "./tests/e2e",
+  testMatch: "**/*.spec.ts",
   use: {
     baseURL: "http://127.0.0.1:3000",
   },

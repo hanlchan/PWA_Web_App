@@ -9,7 +9,7 @@
 | --- | --- | --- |
 | `npm run typecheck` | 通过 | TypeScript 无错误 |
 | `npm run lint` | 通过 | ESLint 无错误或警告 |
-| `npm test` | 通过 | 11 个测试文件、40 个测试全部通过 |
+| `npm test` | 通过 | 12 个测试文件、42 个测试全部通过 |
 | `npm run build` | 通过 | Next.js 16.3.5 生产构建成功，16 个路由生成 |
 | `git diff --check` | 通过 | 未发现空白错误 |
 | 本地生产服务器 `/sw.js` | 通过 | HTTP 200；JavaScript；`no-cache, no-store, must-revalidate`；`X-Frame-Options: DENY` |

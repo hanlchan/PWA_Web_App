@@ -49,6 +49,10 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      follows: { Row: { follower_id: string; following_id: string; created_at: string }; Insert: never; Update: never; Relationships: [] };
+      checkin_likes: { Row: { user_id: string; checkin_id: string; created_at: string }; Insert: never; Update: never; Relationships: [] };
+      notifications: { Row: { id: string; user_id: string; type: Database["public"]["Enums"]["notification_type"]; actor_id: string | null; data: Json; read_at: string | null; created_at: string }; Insert: never; Update: { read_at?: string | null }; Relationships: [] };
+      nudges: { Row: { id: string; actor_id: string; target_id: string; nudge_date: string; created_at: string }; Insert: never; Update: never; Relationships: [] };
     };
     Views: Record<never, never>;
     Functions: {
@@ -72,8 +76,15 @@ export type Database = {
       delete_weight_entry: { Args: { p_entry_id: string }; Returns: undefined };
       get_private_weight_dashboard: { Args: Record<never, never>; Returns: Json };
       get_public_weight_trend: { Args: { p_username: string }; Returns: { measured_date: string; normalized_index: number }[] };
+      search_public_users: { Args: { p_query: string }; Returns: { id: string; username: string; display_name: string; avatar_path: string | null; is_following: boolean }[] };
+      toggle_follow: { Args: { p_target_id: string }; Returns: boolean };
+      get_following_feed: { Args: { p_limit?: number }; Returns: Json };
+      toggle_checkin_like: { Args: { p_checkin_id: string }; Returns: boolean };
+      send_nudge: { Args: { p_target_id: string }; Returns: string };
+      get_my_notifications: { Args: { p_limit?: number }; Returns: Json };
+      mark_notifications_read: { Args: Record<never, never>; Returns: undefined };
     };
-    Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled"; weight_measurement_type: "morning" | "evening" | "custom" };
+    Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled"; weight_measurement_type: "morning" | "evening" | "custom"; notification_type: "workout_reminder" | "nudge" | "like" };
     CompositeTypes: Record<never, never>;
   };
 };

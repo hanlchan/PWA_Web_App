@@ -17,6 +17,10 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 | `plan_occurrences` | `authenticated` | `user_id = auth.uid()` | 打卡日程只对本人可见 |
 | `checkins` | `authenticated` | `user_id = auth.uid()` | 当前核心版本不公开打卡详情 |
 | `weight_entries` | `authenticated` | `user_id = auth.uid()` | 真实公斤数、BMI 和时间严格仅本人可读写 |
+| `follows` | `authenticated` | 仅关系参与者可读，本人可关注/取消关注 | 禁止关注自己 |
+| `checkin_likes` | `authenticated` | 点赞人只能直接读删自己的点赞 | 点赞他人通过校验关注关系的 RPC |
+| `notifications` | `authenticated` | `user_id = auth.uid()` | 仅接收人可读和标记已读 |
+| `nudges` | `authenticated` | 发送者或接收者 | RPC 强制关注关系、待完成计划和每日一次 |
 | `storage.objects/avatars` | 公开读、本人写 | 首级目录等于 `auth.uid()` | 头像属于公开展示数据，上传仍限本人目录 |
 
 所有业务表均显式启用 RLS。没有面向 `anon` 的业务表策略。
@@ -31,6 +35,7 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 
 - 头像桶是公开读；不要把私密照片放入该桶。
 - 公开体重函数只返回日期和以首条数据为 100 的归一化指数；函数返回签名不含公斤数、身高、BMI 或基准值。
-- 当前版本仍没有好友动态或照片记录表，因此不存在这些数据的公开接口。
+- 好友动态 RPC 只返回公开身份、打卡日期、累计天数和点赞数，不返回打卡备注、运动详情或体重。
+- 当前版本仍没有照片记录表，因此不存在照片公开接口。
 - SQL 已完成静态检查和 pgTAP 测试文件编写，但在连接实际 Supabase 项目前不能宣称迁移、RLS 或 RPC 已经数据库实测。
 - 生产上线前必须在独立测试项目或 Supabase 分支执行全部迁移、`db lint` 与 pgTAP，不能对含生产数据的项目直接运行测试夹具。

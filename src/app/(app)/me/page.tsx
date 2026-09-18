@@ -26,6 +26,7 @@ export default async function MePage() {
       </section>
       <Link href="/settings" className="mt-4 block rounded-2xl bg-white p-4 font-semibold">个人设置</Link>
       <Link href="/weight" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">体重与 BMI</Link>
+      <Link href="/notifications" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">通知中心</Link>
       <form action={logoutAction} className="mt-4">
         <button className="w-full rounded-2xl border border-slate-200 bg-white p-4 font-semibold text-slate-600">退出登录</button>
       </form>

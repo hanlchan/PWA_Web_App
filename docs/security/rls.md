@@ -16,6 +16,7 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 | `plan_custom_dates` | `authenticated` | 所属计划的 `user_id = auth.uid()` | 防止跨计划注入日期 |
 | `plan_occurrences` | `authenticated` | `user_id = auth.uid()` | 打卡日程只对本人可见 |
 | `checkins` | `authenticated` | `user_id = auth.uid()` | 当前核心版本不公开打卡详情 |
+| `weight_entries` | `authenticated` | `user_id = auth.uid()` | 真实公斤数、BMI 和时间严格仅本人可读写 |
 | `storage.objects/avatars` | 公开读、本人写 | 首级目录等于 `auth.uid()` | 头像属于公开展示数据，上传仍限本人目录 |
 
 所有业务表均显式启用 RLS。没有面向 `anon` 的业务表策略。
@@ -29,6 +30,7 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 ## 已知边界
 
 - 头像桶是公开读；不要把私密照片放入该桶。
-- 当前版本没有好友动态、体重或照片记录表，因此不存在这些数据的公开接口。
+- 公开体重函数只返回日期和以首条数据为 100 的归一化指数；函数返回签名不含公斤数、身高、BMI 或基准值。
+- 当前版本仍没有好友动态或照片记录表，因此不存在这些数据的公开接口。
 - SQL 已完成静态检查和 pgTAP 测试文件编写，但在连接实际 Supabase 项目前不能宣称迁移、RLS 或 RPC 已经数据库实测。
 - 生产上线前必须在独立测试项目或 Supabase 分支执行全部迁移、`db lint` 与 pgTAP，不能对含生产数据的项目直接运行测试夹具。

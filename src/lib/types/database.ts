@@ -16,7 +16,7 @@ export type Database = {
       profile_settings: {
         Row: { user_id: string; height_cm: number | null; timezone: string; public_weight_trend: boolean; public_workout_details: boolean; photo_default_visibility: string; push_enabled: boolean; created_at: string; updated_at: string };
         Insert: { user_id: string; height_cm?: number | null; timezone: string };
-        Update: { height_cm?: number | null; timezone?: string };
+        Update: { height_cm?: number | null; timezone?: string; public_weight_trend?: boolean; public_workout_details?: boolean; photo_default_visibility?: string; push_enabled?: boolean };
         Relationships: [];
       };
       workout_plans: {
@@ -43,6 +43,12 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      weight_entries: {
+        Row: { id: string; user_id: string; weight_kg: number; measured_at: string; measurement_type: Database["public"]["Enums"]["weight_measurement_type"]; created_at: string };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -62,8 +68,12 @@ export type Database = {
       get_user_stats: { Args: { p_month: string }; Returns: Json };
       get_calendar_month: { Args: { p_month: string }; Returns: { scheduled_date: string; state: string }[] };
       get_public_user_profile: { Args: { p_username: string; p_month: string }; Returns: Json };
+      create_weight_entry: { Args: { p_weight_kg: number; p_measured_at: string; p_measurement_type: Database["public"]["Enums"]["weight_measurement_type"] }; Returns: string };
+      delete_weight_entry: { Args: { p_entry_id: string }; Returns: undefined };
+      get_private_weight_dashboard: { Args: Record<never, never>; Returns: Json };
+      get_public_weight_trend: { Args: { p_username: string }; Returns: { measured_date: string; normalized_index: number }[] };
     };
-    Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled" };
+    Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled"; weight_measurement_type: "morning" | "evening" | "custom" };
     CompositeTypes: Record<never, never>;
   };
 };

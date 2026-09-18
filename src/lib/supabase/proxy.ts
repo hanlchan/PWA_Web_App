@@ -5,7 +5,7 @@ import { getPublicEnv } from "../env";
 import type { Database } from "../types/database";
 
 const protectedPaths = ["/", "/me", "/onboarding"];
-const protectedPathPrefixes = ["/plans", "/stats", "/settings"];
+const protectedPathPrefixes = ["/plans", "/stats", "/settings", "/weight"];
 
 function isProtectedPath(pathname: string) {
   return (

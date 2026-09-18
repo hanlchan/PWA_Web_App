@@ -61,6 +61,7 @@ export type Database = {
       get_today_dashboard: { Args: Record<never,never>; Returns: Json };
       get_user_stats: { Args: { p_month: string }; Returns: Json };
       get_calendar_month: { Args: { p_month: string }; Returns: { scheduled_date: string; state: string }[] };
+      get_public_user_profile: { Args: { p_username: string; p_month: string }; Returns: Json };
     };
     Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled" };
     CompositeTypes: Record<never, never>;

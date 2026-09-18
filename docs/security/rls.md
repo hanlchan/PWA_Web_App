@@ -22,9 +22,11 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 | `notifications` | `authenticated` | `user_id = auth.uid()` | 仅接收人可读和标记已读 |
 | `nudges` | `authenticated` | 发送者或接收者 | RPC 强制关注关系、待完成计划和每日一次 |
 | `push_subscriptions` | `authenticated` | `user_id = auth.uid()` | endpoint 和加密密钥严格仅本人访问 |
+| `progress_photos` | 本人；显式公开记录允许 `anon`/`authenticated` 只读 | 本人写入；公开读取要求 `visibility = public` | 默认私密，私密记录不会被公开查询 |
 | `storage.objects/avatars` | 公开读、本人写 | 首级目录等于 `auth.uid()` | 头像属于公开展示数据，上传仍限本人目录 |
+| `storage.objects/progress-photos` | 本人；显式公开照片可读 | 首级目录等于 `auth.uid()`；公开读取由数据库记录判定 | bucket 永久保持 private，页面只使用 10 分钟 Signed URL |
 
-所有业务表均显式启用 RLS。没有面向 `anon` 的业务表策略。
+所有业务表均显式启用 RLS。照片表是唯一面向 `anon` 的业务表读取策略，而且只匹配用户主动设为 `public` 的记录。
 
 ## RPC 权限
 
@@ -38,6 +40,6 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 - 公开体重函数只返回日期和以首条数据为 100 的归一化指数；函数返回签名不含公斤数、身高、BMI 或基准值。
 - 好友动态 RPC 只返回公开身份、打卡日期、累计天数和点赞数，不返回打卡备注、运动详情或体重。
 - VAPID 私钥和 service-role 只配置在 Supabase Edge Function secrets；浏览器通过登录后路由取得公钥，且仅在用户点击后申请通知权限。
-- 当前版本仍没有照片记录表，因此不存在照片公开接口。
+- 照片上传会在浏览器 Canvas 中重新编码，移除原始 EXIF/GPS；Storage 同时限制 MIME、10 MB 大小和用户目录。公开照片仍位于私有 bucket，只通过短时 Signed URL 访问。
 - SQL 已完成静态检查和 pgTAP 测试文件编写，但在连接实际 Supabase 项目前不能宣称迁移、RLS 或 RPC 已经数据库实测。
 - 生产上线前必须在独立测试项目或 Supabase 分支执行全部迁移、`db lint` 与 pgTAP，不能对含生产数据的项目直接运行测试夹具。

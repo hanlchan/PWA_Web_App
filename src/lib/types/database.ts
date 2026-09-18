@@ -54,6 +54,12 @@ export type Database = {
       notifications: { Row: { id: string; user_id: string; type: Database["public"]["Enums"]["notification_type"]; actor_id: string | null; data: Json; read_at: string | null; created_at: string }; Insert: never; Update: { read_at?: string | null }; Relationships: [] };
       nudges: { Row: { id: string; actor_id: string; target_id: string; nudge_date: string; created_at: string }; Insert: never; Update: never; Relationships: [] };
       push_subscriptions: { Row: { id: string; user_id: string; endpoint: string; p256dh: string; auth: string; user_agent: string | null; created_at: string; updated_at: string }; Insert: never; Update: never; Relationships: [] };
+      progress_photos: {
+        Row: { id: string; user_id: string; storage_path: string; photo_date: string; note: string | null; visibility: Database["public"]["Enums"]["photo_visibility"]; created_at: string };
+        Insert: { id?: string; user_id: string; storage_path: string; photo_date: string; note?: string | null; visibility?: Database["public"]["Enums"]["photo_visibility"]; created_at?: string };
+        Update: { photo_date?: string; note?: string | null; visibility?: Database["public"]["Enums"]["photo_visibility"] };
+        Relationships: [];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -88,8 +94,10 @@ export type Database = {
       remove_push_subscription: { Args: { p_endpoint: string }; Returns: undefined };
       generate_all_occurrences: { Args: Record<never, never>; Returns: number };
       claim_due_reminders: { Args: { p_limit?: number }; Returns: { occurrence_id: string; user_id: string; title: string; scheduled_time: string | null }[] };
+      get_public_progress_photos: { Args: { p_username: string }; Returns: { id: string; storage_path: string; photo_date: string; note: string | null; created_at: string }[] };
+      is_progress_photo_public: { Args: { p_storage_path: string }; Returns: boolean };
     };
-    Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled"; weight_measurement_type: "morning" | "evening" | "custom"; notification_type: "workout_reminder" | "nudge" | "like" };
+    Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled"; weight_measurement_type: "morning" | "evening" | "custom"; notification_type: "workout_reminder" | "nudge" | "like"; photo_visibility: "private" | "public" };
     CompositeTypes: Record<never, never>;
   };
 };

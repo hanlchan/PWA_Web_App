@@ -2,7 +2,9 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { MonthCalendar } from "@/components/calendar/month-calendar";
+import { PublicPhotoGrid } from "@/components/photos/public-photo-grid";
 import { TrendChart } from "@/components/stats/trend-chart";
+import { getPublicProgressPhotos } from "@/lib/queries/photos";
 import { getPublicProfile } from "@/lib/queries/public-profile";
 import { getPublicWeightTrend } from "@/lib/queries/weights";
 
@@ -14,9 +16,10 @@ export default async function PublicProfilePage({
   const { username } = await params;
   const now = new Date();
   const month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
-  const [profile, weightTrend] = await Promise.all([
+  const [profile, weightTrend, publicPhotos] = await Promise.all([
     getPublicProfile(username, month),
     getPublicWeightTrend(username),
+    getPublicProgressPhotos(username),
   ]);
   if (!profile) notFound();
 
@@ -63,8 +66,9 @@ export default async function PublicProfilePage({
             <div className="mt-4"><TrendChart points={weightTrend.map((point) => ({ label: point.measured_date, value: point.normalized_index }))} /></div>
           </section>
         )}
+        <PublicPhotoGrid photos={publicPhotos} />
         <p className="mt-4 text-center text-xs leading-5 text-slate-500">
-          这里只展示打卡日期和汇总，不展示邮箱、体重、身高、备注或私人运动详情。
+          这里只展示打卡日期、汇总和用户主动公开的照片，不展示邮箱、真实体重、身高或私人记录。
         </p>
       </div>
     </main>

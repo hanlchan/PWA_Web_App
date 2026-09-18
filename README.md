@@ -1,6 +1,6 @@
 # 好友运动打卡 PWA
 
-面向手机的中文运动计划与打卡 Web App。当前版本包括邮箱注册/登录、资料初始化、自定义周期计划、未来 90 天日程、一键打卡、撤销、日历、统计、公开打卡主页、私密体重/BMI、归一化公开体重趋势、关注动态、点赞、每日催促、通知中心、Web Push、自动补足日程、个人设置和可安装 PWA。Web 端只负责计划和记录，不包含“打开视频”或外部视频链接。
+面向手机的中文运动计划与打卡 Web App。当前版本包括邮箱注册/登录、资料初始化、自定义周期计划、未来 90 天日程、一键打卡、撤销、日历、统计、公开打卡主页、私密体重/BMI、归一化公开体重趋势、私有进度照片、关注动态、点赞、每日催促、通知中心、Web Push、自动补足日程、个人设置和可安装 PWA。Web 端只负责计划和记录，不包含“打开视频”或外部视频链接。
 
 ## 技术栈
 
@@ -48,7 +48,7 @@ npm run db:lint
 npm run db:test
 ```
 
-迁移会创建业务表、RLS、RPC 和公开读取/本人写入的 `avatars` 桶。迁移成功后重新生成类型：
+迁移会创建业务表、RLS、RPC、公开读取/本人写入的 `avatars` 桶，以及永久保持私有的 `progress-photos` 桶。照片部署和隔离验证见 [照片存储部署说明](docs/deployment/photos.md)。迁移成功后重新生成类型：
 
 ```powershell
 npx supabase gen types typescript --linked | Set-Content -Encoding utf8 src/lib/types/database.ts
@@ -87,4 +87,4 @@ git diff --check
 
 ## 当前范围
 
-当前仍未完成打卡照片。Web Push、Edge Functions 和 Cron 的代码已完成，但必须在真实 Supabase 与 HTTPS 设备环境完成部署验证后才能视为可用。真实体重仅本人可访问，公开页面只读取数据库生成的归一化趋势。好友动态仅返回安全聚合字段。
+进度照片代码已完成，但 Storage/RLS 必须在真实 Supabase 测试项目验证后才能视为可用。Web Push、Edge Functions 和 Cron 同样必须在真实 Supabase 与 HTTPS 设备环境完成部署验证。真实体重仅本人可访问，公开页面只读取数据库生成的归一化趋势和用户主动公开的照片。好友动态仅返回安全聚合字段。

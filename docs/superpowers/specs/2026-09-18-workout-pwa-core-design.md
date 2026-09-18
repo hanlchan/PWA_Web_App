@@ -62,7 +62,7 @@
 5. 资料事务创建成功后进入首页。
 6. 首页保持空状态：“你还没有安排运动计划”，仅提供“创建第一个计划”。
 
-邮箱只保存在 `auth.users`，不会复制到 `profiles` 或任何公共对象。Middleware 只刷新会话和保护路由；RLS 与数据库函数负责真实权限判断。
+邮箱只保存在 `auth.users`，不会复制到 `profiles` 或任何公共对象。Next.js Proxy（旧版本称 Middleware）只刷新会话和保护路由；RLS 与数据库函数负责真实权限判断。
 
 头像为可选公开资料。第一子项目建立单独的 `avatars` bucket，接受 JPEG、PNG、WebP，限制 5MB；上传前缩放并重新编码以移除 EXIF，Storage 策略只允许用户写入自己的目录。进度照片不复用该 bucket，仍在第四子项目使用私有 bucket 实现。
 

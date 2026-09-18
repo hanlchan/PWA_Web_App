@@ -1,5 +1,6 @@
 import { updateSettingsAction } from "@/lib/actions/settings";
 import { getPrivateProfile } from "@/lib/queries/profile";
+import { PushSettings } from "@/components/pwa/push-settings";
 
 export default async function SettingsPage() {
   const data = await getPrivateProfile();
@@ -20,7 +21,7 @@ export default async function SettingsPage() {
           <label className="block text-sm font-medium">照片默认范围<select name="photoDefaultVisibility" defaultValue={data.settings.photo_default_visibility} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3"><option value="private">仅自己</option><option value="public">公开</option></select></label>
         </fieldset>
         <button className="w-full rounded-xl bg-slate-900 px-4 py-4 font-bold text-white">保存设置</button>
-      </form>
+      </form><PushSettings />
     </main>
   );
 }

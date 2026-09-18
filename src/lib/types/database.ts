@@ -53,6 +53,7 @@ export type Database = {
       checkin_likes: { Row: { user_id: string; checkin_id: string; created_at: string }; Insert: never; Update: never; Relationships: [] };
       notifications: { Row: { id: string; user_id: string; type: Database["public"]["Enums"]["notification_type"]; actor_id: string | null; data: Json; read_at: string | null; created_at: string }; Insert: never; Update: { read_at?: string | null }; Relationships: [] };
       nudges: { Row: { id: string; actor_id: string; target_id: string; nudge_date: string; created_at: string }; Insert: never; Update: never; Relationships: [] };
+      push_subscriptions: { Row: { id: string; user_id: string; endpoint: string; p256dh: string; auth: string; user_agent: string | null; created_at: string; updated_at: string }; Insert: never; Update: never; Relationships: [] };
     };
     Views: Record<never, never>;
     Functions: {
@@ -83,6 +84,10 @@ export type Database = {
       send_nudge: { Args: { p_target_id: string }; Returns: string };
       get_my_notifications: { Args: { p_limit?: number }; Returns: Json };
       mark_notifications_read: { Args: Record<never, never>; Returns: undefined };
+      save_push_subscription: { Args: { p_endpoint: string; p_p256dh: string; p_auth: string; p_user_agent: string }; Returns: string };
+      remove_push_subscription: { Args: { p_endpoint: string }; Returns: undefined };
+      generate_all_occurrences: { Args: Record<never, never>; Returns: number };
+      claim_due_reminders: { Args: { p_limit?: number }; Returns: { occurrence_id: string; user_id: string; title: string; scheduled_time: string | null }[] };
     };
     Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled"; weight_measurement_type: "morning" | "evening" | "custom"; notification_type: "workout_reminder" | "nudge" | "like" };
     CompositeTypes: Record<never, never>;

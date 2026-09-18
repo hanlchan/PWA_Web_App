@@ -52,6 +52,16 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Reserved for the later notification subproject. No permission is requested here.
-self.addEventListener("push", () => {});
-self.addEventListener("notificationclick", () => {});
+self.addEventListener("push", (event) => {
+  let payload = { title: "好友运动打卡", body: "你有一条新提醒", url: "/", tag: "workout-reminder" };
+  try { if (event.data) payload = { ...payload, ...event.data.json() }; } catch { /* Keep the safe fallback payload. */ }
+  event.waitUntil(self.registration.showNotification(payload.title, { body: payload.body, icon: "/icons/icon-192.svg", badge: "/icons/icon-192.svg", tag: payload.tag, data: { url: payload.url } }));
+});
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "/", self.location.origin).href;
+  event.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+    const existing = clients.find((client) => client.url.startsWith(self.location.origin));
+    return existing ? existing.navigate(target).then(() => existing.focus()) : self.clients.openWindow(target);
+  }));
+});

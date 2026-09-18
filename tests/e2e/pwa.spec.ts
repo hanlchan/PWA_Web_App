@@ -16,5 +16,8 @@ test("serves an installable manifest and a non-cacheable service worker", async 
   expect(worker.ok()).toBeTruthy();
   expect(worker.headers()["content-type"]).toContain("application/javascript");
   expect(worker.headers()["cache-control"]).toContain("no-store");
-  expect(await worker.text()).toContain("const OFFLINE_URL = \"/offline\"");
+  const workerSource = await worker.text();
+  expect(workerSource).toContain("const OFFLINE_URL = \"/offline\"");
+  expect(workerSource).toContain('self.addEventListener("push"');
+  expect(workerSource).toContain('self.addEventListener("notificationclick"');
 });

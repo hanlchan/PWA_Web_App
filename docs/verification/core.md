@@ -9,7 +9,7 @@
 | --- | --- | --- |
 | `npm run typecheck` | 通过 | TypeScript 无错误 |
 | `npm run lint` | 通过 | ESLint 无错误或警告 |
-| `npm test` | 通过 | 12 个测试文件、42 个测试全部通过 |
+| `npm test` | 通过 | 13 个测试文件、43 个测试全部通过 |
 | `npm run build` | 通过 | Next.js 16.3.5 生产构建成功，16 个路由生成 |
 | `git diff --check` | 通过 | 未发现空白错误 |
 | 本地生产服务器 `/sw.js` | 通过 | HTTP 200；JavaScript；`no-cache, no-store, must-revalidate`；`X-Frame-Options: DENY` |
@@ -29,6 +29,8 @@
 | 浏览器端注册、登录、计划和打卡 E2E | 未验证 | 需要真实 Supabase 环境与测试账号；当前仅覆盖公开页和 PWA 基础 |
 | Lighthouse/真实设备安装 | 未验证 | 需要 HTTPS 部署或生产预览 |
 | Vercel 部署 | 未执行 | 按用户要求，推送 GitHub 并创建 Supabase 后再部署 |
+| Supabase Edge Functions 本地执行 | 环境受限 | 本机没有 Deno，Supabase 本地运行依赖 Docker；函数源码与固定版本依赖已编写但未执行 |
+| Web Push 实机收发 | 未验证 | 需要 HTTPS、真实 VAPID keys、已部署 Edge Functions、Cron 和支持 Push 的设备 |
 
 ## 结论
 

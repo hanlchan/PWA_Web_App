@@ -21,6 +21,7 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 | `checkin_likes` | `authenticated` | 点赞人只能直接读删自己的点赞 | 点赞他人通过校验关注关系的 RPC |
 | `notifications` | `authenticated` | `user_id = auth.uid()` | 仅接收人可读和标记已读 |
 | `nudges` | `authenticated` | 发送者或接收者 | RPC 强制关注关系、待完成计划和每日一次 |
+| `push_subscriptions` | `authenticated` | `user_id = auth.uid()` | endpoint 和加密密钥严格仅本人访问 |
 | `storage.objects/avatars` | 公开读、本人写 | 首级目录等于 `auth.uid()` | 头像属于公开展示数据，上传仍限本人目录 |
 
 所有业务表均显式启用 RLS。没有面向 `anon` 的业务表策略。
@@ -36,6 +37,7 @@ Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕
 - 头像桶是公开读；不要把私密照片放入该桶。
 - 公开体重函数只返回日期和以首条数据为 100 的归一化指数；函数返回签名不含公斤数、身高、BMI 或基准值。
 - 好友动态 RPC 只返回公开身份、打卡日期、累计天数和点赞数，不返回打卡备注、运动详情或体重。
+- VAPID 私钥和 service-role 只配置在 Supabase Edge Function secrets；浏览器通过登录后路由取得公钥，且仅在用户点击后申请通知权限。
 - 当前版本仍没有照片记录表，因此不存在照片公开接口。
 - SQL 已完成静态检查和 pgTAP 测试文件编写，但在连接实际 Supabase 项目前不能宣称迁移、RLS 或 RPC 已经数据库实测。
 - 生产上线前必须在独立测试项目或 Supabase 分支执行全部迁移、`db lint` 与 pgTAP，不能对含生产数据的项目直接运行测试夹具。

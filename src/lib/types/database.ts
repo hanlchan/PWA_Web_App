@@ -59,6 +59,8 @@ export type Database = {
       update_checkin_details: { Args: { p_checkin_id: string; p_duration_minutes: number | null; p_activity_text: string; p_notes: string }; Returns: undefined };
       undo_checkin: { Args: { p_checkin_id: string }; Returns: undefined };
       get_today_dashboard: { Args: Record<never,never>; Returns: Json };
+      get_user_stats: { Args: { p_month: string }; Returns: Json };
+      get_calendar_month: { Args: { p_month: string }; Returns: { scheduled_date: string; state: string }[] };
     };
     Enums: { recurrence_type: "one_time" | "weekly" | "monthly" | "custom_dates"; occurrence_status: "pending" | "completed" | "skipped" | "cancelled" };
     CompositeTypes: Record<never, never>;

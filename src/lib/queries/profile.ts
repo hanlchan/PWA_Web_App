@@ -1,0 +1,2 @@
+import { createClient } from "@/lib/supabase/server";
+export async function getPrivateProfile(){const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)return null;const [{data:profile},{data:settings}]=await Promise.all([supabase.from("profiles").select("*").eq("id",user.id).single(),supabase.from("profile_settings").select("*").eq("user_id",user.id).single()]);return profile&&settings?{profile,settings}:null;}

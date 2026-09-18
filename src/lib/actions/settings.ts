@@ -1,0 +1,6 @@
+"use server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { profileSchema } from "@/lib/validation/profile";
+export async function updateSettingsAction(form:FormData){const parsed=profileSchema.safeParse({username:form.get("username"),displayName:form.get("displayName"),heightCm:form.get("heightCm"),timezone:form.get("timezone"),avatarPath:form.get("avatarPath")||null});if(!parsed.success)throw new Error(parsed.error.issues[0]?.message??"资料无效");const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)redirect("/login");const {error}=await supabase.from("profiles").update({display_name:parsed.data.displayName,avatar_path:parsed.data.avatarPath??null}).eq("id",user.id);if(error)throw new Error("资料更新失败");const {error:settingsError}=await supabase.from("profile_settings").update({height_cm:parsed.data.heightCm,timezone:parsed.data.timezone}).eq("user_id",user.id);if(settingsError)throw new Error("设置更新失败");await supabase.rpc("reschedule_future_notifications",{p_user_id:user.id});revalidatePath("/me");redirect("/me");}

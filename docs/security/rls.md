@@ -2,7 +2,7 @@
 
 ## 信任边界
 
-浏览器只使用 `NEXT_PUBLIC_SUPABASE_URL` 和 anon key。anon key 不是授权凭据；实际身份来自 Supabase Auth JWT，数据库以 `auth.uid()` 作为所有权边界。项目不包含、也不允许前端读取 service-role key。
+浏览器只使用 `NEXT_PUBLIC_SUPABASE_URL` 和新版 Publishable Key。Publishable Key 不是用户授权凭据；实际身份来自 Supabase Auth JWT，数据库以 `auth.uid()` 作为所有权边界。项目不包含、也不允许前端读取 Secret Key 或 service-role key。
 
 Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕过 RLS。事务型写入通过固定 `search_path` 的数据库函数完成，函数内部从 `auth.uid()` 推导用户，不接受任意 `user_id`。
 

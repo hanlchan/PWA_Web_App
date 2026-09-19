@@ -16,7 +16,7 @@
 | 本地生产服务器 `/manifest.webmanifest` | 通过 | HTTP 200；`application/manifest+json` |
 | `npm run test:e2e`（HTTP/API 部分） | 部分通过 | 5 个 PWA manifest/service-worker 测试通过 |
 
-构建验证使用占位的公开 Supabase URL 与 anon key，只验证编译和路由生成，不代表后端可连接。
+构建验证使用占位的公开 Supabase URL 与 Publishable Key，只验证编译和路由生成，不代表后端可连接。
 
 ## 尚未执行
 

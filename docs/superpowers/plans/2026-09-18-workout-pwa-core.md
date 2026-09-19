@@ -142,7 +142,7 @@ test-results/
 
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
@@ -173,7 +173,7 @@ import { parsePublicEnv } from './env'
 
 describe('parsePublicEnv', () => {
   it('rejects missing or non-URL Supabase values', () => {
-    expect(() => parsePublicEnv({ NEXT_PUBLIC_SUPABASE_URL: '', NEXT_PUBLIC_SUPABASE_ANON_KEY: '' })).toThrow()
+    expect(() => parsePublicEnv({ NEXT_PUBLIC_SUPABASE_URL: '', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: '' })).toThrow()
   })
 })
 ```
@@ -189,7 +189,7 @@ Create a Zod object that accepts exactly the three variables in `.env.example`, 
 ```ts
 const publicEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20),
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().startsWith('sb_publishable_'),
   NEXT_PUBLIC_SITE_URL: z.string().url().default('http://localhost:3000'),
 })
 ```
@@ -716,7 +716,7 @@ Expected: only intentional local-only files are untracked; `.env.local` and `.su
 
 ## Execution checkpoints
 
-- After Task 2: request only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`; never request the service-role key in chat.
+- After Task 2: request only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`; never request a Secret Key or service-role key in chat.
 - Before Task 3 linked execution: obtain the Supabase project ref and confirm the project contains no production data that test fixtures could affect.
 - After Task 6: manually inspect generated occurrences for all four recurrence types and two timezones.
 - After Task 9: manually verify one-tap completion on a 320px viewport.

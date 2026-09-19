@@ -47,7 +47,7 @@
 浏览器中只允许以下公开环境变量：
 
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
 `SUPABASE_SERVICE_ROLE_KEY` 不进入浏览器包，也不用于普通用户请求。后续 Edge Functions 所需秘密通过 Supabase Secrets 保存。
 

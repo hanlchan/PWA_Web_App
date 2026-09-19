@@ -14,7 +14,7 @@ vi.mock("@supabase/ssr", () => ({
 vi.mock("../env", () => ({
   getPublicEnv: () => ({
     NEXT_PUBLIC_SUPABASE_URL: "https://project.supabase.co",
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: "a".repeat(20),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_test-value",
     NEXT_PUBLIC_SITE_URL: "http://localhost:3000",
   }),
 }));

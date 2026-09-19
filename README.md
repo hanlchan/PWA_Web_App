@@ -22,7 +22,7 @@ Copy-Item .env.example .env.local
 
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=https://你的项目.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=你的-anon-key
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=你的-publishable-key
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
@@ -83,7 +83,7 @@ git diff --check
 
 - 前端：在 Vercel 回滚到上一成功部署。
 - 数据库：迁移包含表和函数变更，不建议直接删除生产数据。先备份，在测试分支演练逆向 SQL，再经人工确认执行。
-- 密钥泄露：立即在 Supabase 轮换对应密钥，清理 Git 历史并重新部署。anon key 可公开但仍应依赖 RLS；service-role key 一旦泄露必须立即轮换。
+- 密钥泄露：立即在 Supabase 轮换对应密钥，清理 Git 历史并重新部署。Publishable Key 可用于浏览器但仍必须依赖 RLS；任何 Secret Key 或 service-role key 一旦泄露必须立即轮换。
 
 ## 当前范围
 

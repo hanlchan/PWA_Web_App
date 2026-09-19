@@ -71,6 +71,13 @@ npm run db:test
 git diff --check
 ```
 
+如果 Windows 已安装 Edge，但尚未下载 Playwright 自带的 Chromium，可以直接复用系统浏览器：
+
+```powershell
+$env:PLAYWRIGHT_EXECUTABLE_PATH = "${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe"
+npm run test:e2e
+```
+
 数据库命令必须在已链接的测试项目上运行。`npm run db:test` 通过 Supabase Management API 在云端逐个执行 pgTAP 文件，每个测试都以 `BEGIN` 开始并以 `ROLLBACK` 结束，不依赖 Docker，也不会保留测试夹具；如需 CLI 的 Docker 测试运行器，可使用 `npm run db:test:docker`。当前准确状态见 [核心验证记录](docs/verification/core.md)，RLS 设计见 [安全说明](docs/security/rls.md)。
 
 ## GitHub 与 Vercel

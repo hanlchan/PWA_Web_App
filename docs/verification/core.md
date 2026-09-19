@@ -14,7 +14,7 @@
 | `git diff --check` | 通过 | 未发现空白错误 |
 | 本地生产服务器 `/sw.js` | 通过 | HTTP 200；JavaScript；`no-cache, no-store, must-revalidate`；`X-Frame-Options: DENY` |
 | 本地生产服务器 `/manifest.webmanifest` | 通过 | HTTP 200；`application/manifest+json` |
-| `npm run test:e2e`（HTTP/API 部分） | 部分通过 | 5 个 PWA manifest/service-worker 测试通过 |
+| `npm run test:e2e` | 通过 | 复用本机 Edge，15 项全部通过；覆盖桌面及 320/375/390/430 五种视口、登录页无横向滚动、离线页与 PWA 静态资源 |
 | `npx supabase db push` | 通过 | 云端项目已应用 `0001`–`0014`，未执行 seed |
 | `npm run db:lint` | 通过 | 云端 `public` 业务 schema 无 error；命令配置为 error 时失败 |
 | 云端 pgTAP | 通过 | 11 个 SQL 测试文件、117 个断言通过；全部事务回滚，无测试夹具残留 |
@@ -27,7 +27,6 @@
 
 | 检查 | 状态 | 原因/后续动作 |
 | --- | --- | --- |
-| Playwright 页面/响应式 E2E | 环境受限 | 10 项用例未启动：本机缺少 Chromium；约 196MB 安装包下载长时间无进度后已终止 |
 | 浏览器端注册、登录、计划和打卡 E2E | 未验证 | 需要真实 Supabase 环境与测试账号；当前仅覆盖公开页和 PWA 基础 |
 | Lighthouse/真实设备安装 | 未验证 | 需要 HTTPS 部署或生产预览 |
 | Vercel 部署 | 未执行 | 按用户要求，待推送 GitHub 并完成云端真实用户流程后再部署 |

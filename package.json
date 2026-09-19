@@ -12,8 +12,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "db:lint": "supabase db lint --linked --level error",
-    "db:test": "supabase test db --linked"
+    "db:lint": "supabase db lint --linked --schema public --level error --fail-on error",
+    "db:test": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-db-cloud.ps1",
+    "db:test:docker": "supabase test db --linked"
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",

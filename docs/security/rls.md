@@ -6,6 +6,8 @@
 
 Server Action 同样使用当前请求 Cookie 创建 Supabase 客户端，不绕过 RLS。事务型写入通过固定 `search_path` 的数据库函数完成，函数内部从 `auth.uid()` 推导用户，不接受任意 `user_id`。
 
+PostgreSQL 会先检查表级权限，再应用 RLS。迁移 `0014_table_api_grants.sql` 显式授予 `authenticated` 业务表操作权限，实际可见和可修改行仍由下表中的 RLS 策略限制；`anon` 只额外获得公开照片元数据的 `SELECT`，私密行仍无法匹配策略。
+
 ## 表与策略
 
 | 对象 | 直接访问角色 | 所有权条件 | 说明 |

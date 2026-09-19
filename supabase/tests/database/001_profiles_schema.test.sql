@@ -10,7 +10,7 @@ select has_column('public', 'profile_settings', 'timezone', 'settings.timezone e
 select has_column('public', 'profile_settings', 'height_cm', 'settings.height exists');
 select col_default_is('public', 'profile_settings', 'public_weight_trend', 'false', 'weight sharing defaults false');
 select col_default_is('public', 'profile_settings', 'public_workout_details', 'false', 'details sharing defaults false');
-select col_default_is('public', 'profile_settings', 'photo_default_visibility', '''private''::text', 'photos default private');
+select col_default_is('public', 'profile_settings', 'photo_default_visibility', 'private', 'photos default private');
 select col_default_is('public', 'profile_settings', 'push_enabled', 'false', 'push defaults false');
 select has_function('public', 'complete_onboarding', array['extensions.citext', 'text', 'numeric', 'text', 'text'], 'onboarding function exists');
 

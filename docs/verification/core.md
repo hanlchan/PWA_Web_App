@@ -9,15 +9,15 @@
 | --- | --- | --- |
 | `npm run typecheck` | 通过 | TypeScript 无错误 |
 | `npm run lint` | 通过 | ESLint 无错误或警告 |
-| `npm test` | 通过 | 14 个测试文件、46 个测试全部通过 |
-| `npm run build` | 通过 | Next.js 16.3.5 生产构建成功，21 个路由生成，包含 `/photos` |
+| `npm test` | 通过 | 17 个测试文件、53 个测试全部通过 |
+| `npm run build` | 通过 | Next.js 16.3.5 生产构建成功，包含 `/photos` 与 `/stats/[date]` |
 | `git diff --check` | 通过 | 未发现空白错误 |
 | 本地生产服务器 `/sw.js` | 通过 | HTTP 200；JavaScript；`no-cache, no-store, must-revalidate`；`X-Frame-Options: DENY` |
 | 本地生产服务器 `/manifest.webmanifest` | 通过 | HTTP 200；`application/manifest+json` |
 | `npm run test:e2e` | 通过 | 复用本机 Edge，15 项全部通过；覆盖桌面及 320/375/390/430 五种视口、登录页无横向滚动、离线页与 PWA 静态资源 |
-| `npx supabase db push` | 通过 | 云端项目已应用 `0001`–`0014`，未执行 seed |
-| `npm run db:lint` | 通过 | 云端 `public` 业务 schema 无 error；命令配置为 error 时失败 |
-| 云端 pgTAP | 通过 | 11 个 SQL 测试文件、117 个断言通过；全部事务回滚，无测试夹具残留 |
+| `npx supabase db push` | 通过 | 云端项目已应用 `0001`–`0015`，未执行 seed；`0015` 限制未来及超过 7 天的计划打卡 |
+| `npm run db:lint` | 通过至 `0014` | 云端 `public` 业务 schema 无 error；应用 `0015` 后的复跑因 Management API 无响应而待补 |
+| 云端 pgTAP | 通过 | 原 11 个 SQL 文件、117 个断言已通过；`0015` 的今天/未来/超期 3 项日期边界断言也已通过，全部事务回滚；第 7 天的精确边界新增后待 API 恢复复跑 |
 | `npm run db:test` 一键云端运行器 | 部分验证 | PowerShell 语法、超时终止与重试逻辑已验证；因 Management API 在连续查询后短暂无响应，尚未再完成一次整套串行重跑 |
 | Publishable Key 公开 RPC | 通过 | 公开资料与公开照片 RPC 均返回 HTTP 200；不存在用户返回 `null`/空数组 |
 
@@ -28,6 +28,7 @@
 | 检查 | 状态 | 原因/后续动作 |
 | --- | --- | --- |
 | 浏览器端注册、登录、计划和打卡 E2E | 未验证 | 需要真实 Supabase 环境与测试账号；当前仅覆盖公开页和 PWA 基础 |
+| `0015` 后完整云端 lint/pgTAP 重跑 | API 暂时无响应 | 迁移和新增 3 项测试已成功；随后只读复核连续 90 秒无返回并已终止，待 API 恢复后运行 `npm run db:lint` 与 `npm run db:test` |
 | Lighthouse/真实设备安装 | 未验证 | 需要 HTTPS 部署或生产预览 |
 | Vercel 部署 | 未执行 | 按用户要求，待推送 GitHub 并完成云端真实用户流程后再部署 |
 | Supabase Edge Functions 本地执行 | 环境受限 | 本机没有 Deno，Supabase 本地运行依赖 Docker；函数源码与固定版本依赖已编写但未执行 |
@@ -37,4 +38,4 @@
 
 ## 结论
 
-前端静态检查、单元测试、生产构建、照片输入校验、PWA 路由和响应头已通过；云端迁移、业务 schema lint、117 项 pgTAP 和 Publishable Key 公开 RPC 也已通过。仍不能把 Canvas 源码检查等同于真机验证；上线前还需完成真实注册登录、照片文件、Edge Functions、Web Push 和完整用户流程。
+前端静态检查、单元测试、生产构建、照片输入校验、PWA 路由和响应头已通过；云端迁移、截至 `0014` 的业务 schema lint、原 117 项 pgTAP、`0015` 的 3 项核心日期边界检查和 Publishable Key 公开 RPC 已通过。仍不能把 Canvas 源码检查等同于真机验证；上线前还需完成本轮云端复核、真实注册登录、照片文件、Edge Functions、Web Push 和完整用户流程。

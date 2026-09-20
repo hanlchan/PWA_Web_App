@@ -6,7 +6,7 @@ test("serves an installable manifest and a non-cacheable service worker", async 
   expect(manifestResponse.headers()["content-type"]).toContain("application/manifest+json");
   const manifest = await manifestResponse.json();
   expect(manifest).toMatchObject({
-    name: "好友运动打卡",
+    name: "运动打卡",
     short_name: "运动打卡",
     display: "standalone",
   });

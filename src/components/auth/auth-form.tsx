@@ -14,7 +14,7 @@ export function AuthForm({ mode, action }: Props) {
   const isPassword = mode !== "forgot";
   return <main className="min-h-dvh bg-emerald-50 px-5 py-12 text-slate-900">
     <section className="mx-auto max-w-sm rounded-3xl bg-white p-6 shadow-xl shadow-emerald-900/10">
-      <p className="text-sm font-semibold text-emerald-600">好友运动打卡</p>
+      <p className="text-sm font-semibold text-emerald-600">运动打卡</p>
       <h1 className="mt-2 text-2xl font-bold">{{ login:"欢迎回来", register:"创建账号", forgot:"找回密码", reset:"设置新密码" }[mode]}</h1>
       <form action={formAction} className="mt-7 space-y-4">
         {isEmail && <label className="block text-sm font-medium">邮箱<input name="email" type="email" autoComplete="email" required className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-500" /></label>}

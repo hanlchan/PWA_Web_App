@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "好友运动打卡",
+    name: "运动打卡",
     short_name: "运动打卡",
-    description: "和好友一起制定运动计划、记录打卡进度。",
+    description: "制定运动计划，记录每日打卡进度。",
     start_url: "/",
     scope: "/",
     display: "standalone",

@@ -53,7 +53,7 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  let payload = { title: "好友运动打卡", body: "你有一条新提醒", url: "/", tag: "workout-reminder" };
+  let payload = { title: "运动打卡", body: "你有一条新提醒", url: "/", tag: "workout-reminder" };
   try { if (event.data) payload = { ...payload, ...event.data.json() }; } catch { /* Keep the safe fallback payload. */ }
   event.waitUntil(self.registration.showNotification(payload.title, { body: payload.body, icon: "/icons/icon-192.svg", badge: "/icons/icon-192.svg", tag: payload.tag, data: { url: payload.url } }));
 });

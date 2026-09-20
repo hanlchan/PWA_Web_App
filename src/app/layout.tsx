@@ -6,8 +6,8 @@ import { ServiceWorkerRegistration } from "@/components/pwa/service-worker-regis
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "好友健身",
-  description: "与好友一起规划和完成训练。",
+  title: "运动打卡",
+  description: "制定运动计划，记录每日打卡进度。",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

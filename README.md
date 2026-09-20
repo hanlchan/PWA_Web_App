@@ -26,7 +26,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=你的-publishable-key
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-不要在本项目或浏览器变量中放入 `SUPABASE_SERVICE_ROLE_KEY`。然后运行：
+不要在本项目或浏览器变量中放入 Supabase Secret Key 或 legacy `SUPABASE_SERVICE_ROLE_KEY`。然后运行：
 
 ```powershell
 npm run dev
@@ -56,7 +56,7 @@ npx supabase gen types typescript --linked | Set-Content -Encoding utf8 src/lib/
 
 提交生成类型前，请再次执行前端验证。
 
-Web Push 还需要 VAPID、Edge Functions、Vault 和 Cron。按 [Push 与 Cron 部署说明](docs/deployment/push-and-cron.md) 配置；任何私钥和 service-role 都不得进入浏览器或 Git。
+Web Push 还需要 VAPID、Edge Functions、Vault 和 Cron。按 [Push 与 Cron 部署说明](docs/deployment/push-and-cron.md) 配置；任何私钥、Secret Key 和 legacy service-role key 都不得进入浏览器或 Git。
 
 ## 验证
 
@@ -94,4 +94,4 @@ npm run test:e2e
 
 ## 当前范围
 
-进度照片代码已完成，但 Storage/RLS 必须在真实 Supabase 测试项目验证后才能视为可用。Web Push、Edge Functions 和 Cron 同样必须在真实 Supabase 与 HTTPS 设备环境完成部署验证。真实体重仅本人可访问，公开页面只读取数据库生成的归一化趋势和用户主动公开的照片。好友动态仅返回安全聚合字段。
+进度照片 Storage/RLS、Edge Functions 和 Cron 已在真实 Supabase 个人项目通过自动化验证；Web Push 实机收发仍需 HTTPS 部署与支持 Push 的真实设备。真实体重仅本人可访问，公开页面只读取数据库生成的归一化趋势和用户主动公开的照片。好友动态仅返回安全聚合字段。

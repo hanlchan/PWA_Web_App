@@ -3,12 +3,15 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $testDirectory = Join-Path $projectRoot 'supabase\tests\database'
 $files = Get-ChildItem -LiteralPath $testDirectory -Filter '*.sql' | Sort-Object Name
-$npx = (Get-Command npx.cmd -ErrorAction Stop).Source
+$supabase = Join-Path $projectRoot 'node_modules\@supabase\cli-windows-x64\bin\supabase.exe'
+if (-not (Test-Path -LiteralPath $supabase)) {
+  throw 'The Windows Supabase CLI binary is missing. Run npm install before cloud database tests.'
+}
 
 function Invoke-CloudTestFile([string]$testPath) {
   $startInfo = New-Object System.Diagnostics.ProcessStartInfo
-  $startInfo.FileName = $env:ComSpec
-  $startInfo.Arguments = "/d /s /c `"`"$npx`" supabase db query --linked --file `"$testPath`"`""
+  $startInfo.FileName = $supabase
+  $startInfo.Arguments = "db query --linked --file `"$testPath`""
   $startInfo.WorkingDirectory = $projectRoot
   $startInfo.UseShellExecute = $false
   $startInfo.RedirectStandardOutput = $true
@@ -21,7 +24,12 @@ function Invoke-CloudTestFile([string]$testPath) {
   $stderr = $process.StandardError.ReadToEndAsync()
 
   if (-not $process.WaitForExit(45000)) {
-    & taskkill.exe /PID $process.Id /T /F 2>$null | Out-Null
+    try {
+      $process.Kill($true)
+      $process.WaitForExit()
+    } catch {
+      # The process may exit between the timeout and the kill request.
+    }
     return $null
   }
 

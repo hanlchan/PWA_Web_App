@@ -21,6 +21,7 @@ export function AuthForm({ mode, action }: Props) {
         {isPassword && <label className="block text-sm font-medium">密码<input name="password" type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} required minLength={8} className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-500" /></label>}
         {(mode === "register" || mode === "reset") && <label className="block text-sm font-medium">确认密码<input name="confirmPassword" type="password" autoComplete="new-password" required minLength={8} className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-500" /></label>}
         {!state.ok && state.message && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{state.message}</p>}
+        {state.ok && mode === "register" && <p role="status" className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700">注册成功，请检查邮箱完成验证。</p>}
         {state.ok && mode === "forgot" && <p className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700">重置邮件已发送，请检查邮箱。</p>}
         <button disabled={pending} className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-bold text-white disabled:opacity-60">{pending ? "处理中…" : ({ login:"登录", register:"注册", forgot:"发送重置邮件", reset:"更新密码" }[mode])}</button>
       </form>

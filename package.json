@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:live": "node scripts/test-live-supabase.mjs",
     "db:lint": "supabase db lint --linked --schema public --level error --fail-on error",
     "db:test": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-db-cloud.ps1",
     "db:test:docker": "supabase test db --linked"

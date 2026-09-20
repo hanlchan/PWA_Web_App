@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import webpush from "web-push";
-import { authorizeCron, requiredEnv } from "../_shared/cron.ts";
+import { authorizeCron, getSupabaseSecretKey, requiredEnv } from "../_shared/cron.ts";
 
 type Reminder = { occurrence_id: string; user_id: string; title: string; scheduled_time: string | null };
 type Subscription = { id: string; endpoint: string; p256dh: string; auth: string };
@@ -9,7 +9,7 @@ Deno.serve(async (request) => {
   const denied = authorizeCron(request);
   if (denied) return denied;
   try {
-    const supabase = createClient(requiredEnv("SUPABASE_URL"), requiredEnv("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false } });
+    const supabase = createClient(requiredEnv("SUPABASE_URL"), getSupabaseSecretKey(), { auth: { persistSession: false } });
     webpush.setVapidDetails(requiredEnv("VAPID_SUBJECT"), requiredEnv("VAPID_PUBLIC_KEY"), requiredEnv("VAPID_PRIVATE_KEY"));
     const { data, error } = await supabase.rpc("claim_due_reminders", { p_limit: 100 });
     if (error) throw error;

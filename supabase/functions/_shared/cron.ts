@@ -11,3 +11,10 @@ export function requiredEnv(name: string) {
   if (!value) throw new Error(`Missing ${name}`);
   return value;
 }
+
+export function getSupabaseSecretKey() {
+  const values = JSON.parse(requiredEnv("SUPABASE_SECRET_KEYS")) as Record<string, string>;
+  const value = values.default;
+  if (!value) throw new Error("Missing default Supabase secret key");
+  return value;
+}

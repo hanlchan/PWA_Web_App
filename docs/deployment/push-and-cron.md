@@ -18,7 +18,7 @@ npx web-push generate-vapid-keys
 npx supabase secrets set WORKOUT_CRON_SECRET="..." VAPID_SUBJECT="mailto:你的邮箱" VAPID_PUBLIC_KEY="..." VAPID_PRIVATE_KEY="..."
 ```
 
-托管运行时会提供 `SUPABASE_URL` 和 `SUPABASE_SERVICE_ROLE_KEY`。不要把 service-role 写入本地前端环境文件。
+托管运行时会提供 `SUPABASE_URL` 和 `SUPABASE_SECRET_KEYS`。函数从 `SUPABASE_SECRET_KEYS` JSON 中读取 `default` 新版 Secret Key，不依赖 legacy `SUPABASE_SERVICE_ROLE_KEY`。不要把 Secret Key 写入前端环境文件。
 
 ## 3. 部署函数
 
@@ -31,11 +31,10 @@ npx supabase functions deploy send-workout-reminders
 
 ## 4. 配置 Vault 和 Cron
 
-在 Supabase SQL Editor 中创建三个 Vault secrets：
+在 Supabase SQL Editor 中创建两个 Vault secrets：
 
 ```sql
 select vault.create_secret('https://PROJECT_REF.supabase.co', 'project_url');
-select vault.create_secret('YOUR_PUBLISHABLE_KEY', 'publishable_key');
 select vault.create_secret('与 Edge Function 相同的随机密钥', 'workout_cron_secret');
 ```
 
@@ -44,7 +43,7 @@ select vault.create_secret('与 Edge Function 相同的随机密钥', 'workout_c
 - 每分钟执行一次 `send-workout-reminders`
 - 每天 02:15 UTC 执行一次 `generate-occurrences`
 
-请先用 `cron.job` 检查是否存在同名任务，避免重复调度。运行历史位于 `cron.job_run_details`。
+`setup.sql` 会在重建前精确取消同名任务，可重复执行而不会叠加调度。运行历史位于 `cron.job_run_details`。
 
 ## 5. 验收
 
@@ -56,4 +55,4 @@ select vault.create_secret('与 Edge Function 相同的随机密钥', 'workout_c
 6. 将订阅置为失效后，确认 404/410 响应会清理该 endpoint。
 7. 拒绝通知权限时，计划、打卡和应用内通知仍须正常工作。
 
-当前仓库没有真实 VAPID keys，Edge Function 和 Web Push 尚未在托管环境实测。
+仓库不保存真实 VAPID keys。请在 Supabase Edge Secret 和 Vercel 环境变量中分别配置所需的公开/私密值。

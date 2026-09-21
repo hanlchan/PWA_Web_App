@@ -2,6 +2,7 @@ import Link from "next/link";
 import { manualCheckinAction, undoCheckinAction } from "@/lib/actions/checkins";
 import { OccurrenceCard } from "@/components/workout/occurrence-card";
 import { getTodayDashboard } from "@/lib/queries/dashboard";
+import { ActionStateForm, PendingSubmitButton } from "@/components/forms/action-state-form";
 
 export default async function DashboardPage() {
   const dashboard = await getTodayDashboard();
@@ -28,8 +29,8 @@ export default async function DashboardPage() {
       {dashboard.today_occurrences.map((item) => <OccurrenceCard key={item.id} occurrence={item} checkin={dashboard.today_checkins.find((checkin) => checkin.occurrence_id === item.id)} />)}
     </div>
     {manual
-      ? <form action={undoCheckinAction} className="mt-4"><input type="hidden" name="checkinId" value={manual.id}/><button className="w-full rounded-2xl bg-emerald-50 px-4 py-4 font-semibold text-emerald-700">✓ 今日已临时打卡 · 撤销</button></form>
-      : <form action={manualCheckinAction} className="mt-4"><input type="hidden" name="checkinDate" value={dashboard.today}/><button className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 font-semibold text-slate-700">临时打卡</button></form>}
+      ? <ActionStateForm action={undoCheckinAction} className="mt-4"><input type="hidden" name="checkinId" value={manual.id}/><PendingSubmitButton pendingLabel="撤销中…" className="w-full rounded-2xl bg-emerald-50 px-4 py-4 font-semibold text-emerald-700 disabled:opacity-50">✓ 今日已临时打卡 · 撤销</PendingSubmitButton></ActionStateForm>
+      : <ActionStateForm action={manualCheckinAction} className="mt-4"><input type="hidden" name="checkinDate" value={dashboard.today}/><PendingSubmitButton pendingLabel="打卡中…" className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-4 font-semibold text-slate-700 disabled:opacity-50">临时打卡</PendingSubmitButton></ActionStateForm>}
     <div className="mt-6 grid grid-cols-2 gap-3">
       <div className="rounded-2xl bg-white p-4"><span className="text-sm text-slate-500">累计打卡</span><p className="mt-1 text-2xl font-bold">{dashboard.total_checkin_days} 天</p></div>
       <div className="rounded-2xl bg-white p-4"><span className="text-sm text-slate-500">连续计划完成</span><p className="mt-1 text-2xl font-bold">{dashboard.current_streak} 日</p></div>

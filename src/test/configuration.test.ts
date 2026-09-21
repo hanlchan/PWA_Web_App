@@ -6,6 +6,13 @@ import { describe, expect, it } from "vitest";
 const readProjectFile = (path: string) => readFileSync(resolve(process.cwd(), path), "utf8");
 
 describe("test configuration", () => {
+  it("deploys Vercel Functions in Seoul without a Netlify build config", () => {
+    const config = JSON.parse(readProjectFile("vercel.json")) as { regions?: string[] };
+
+    expect(config.regions).toEqual(["icn1"]);
+    expect(() => readProjectFile("netlify.toml")).toThrow();
+  });
+
   it("discovers Playwright specs only from the browser test directory", () => {
     const config = readProjectFile("playwright.config.ts");
 

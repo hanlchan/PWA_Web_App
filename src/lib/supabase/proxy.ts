@@ -39,11 +39,10 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const isAuthenticated = Boolean(claimsData?.claims?.sub);
 
-  if (!user && isProtectedPath(request.nextUrl.pathname)) {
+  if (!isAuthenticated && isProtectedPath(request.nextUrl.pathname)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.search = "";

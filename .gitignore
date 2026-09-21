@@ -5,6 +5,7 @@ node_modules/
 .npm-cache/
 *.tsbuildinfo
 .next/
+.vercel/
 coverage/
 playwright-report/
 test-results/

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   createServerClient: vi.fn(),
-  getUser: vi.fn(),
+  getClaims: vi.fn(),
   setAll: undefined as undefined | ((cookies: Array<{ name: string; value: string; options?: Record<string, unknown> }>) => void),
 }));
 
@@ -25,13 +25,13 @@ const requestFor = (path: string) => new NextRequest(new URL(path, "http://local
 
 describe("updateSession", () => {
   beforeEach(() => {
-    mocks.getUser.mockReset();
-    mocks.getUser.mockResolvedValue({ data: { user: null }, error: null });
+    mocks.getClaims.mockReset();
+    mocks.getClaims.mockResolvedValue({ data: null, error: null });
     mocks.createServerClient.mockReset();
     mocks.createServerClient.mockImplementation(
       (_url, _key, options: { cookies: { setAll: typeof mocks.setAll } }) => {
         mocks.setAll = options.cookies.setAll;
-        return { auth: { getUser: mocks.getUser } };
+        return { auth: { getClaims: mocks.getClaims } };
       },
     );
   });
@@ -44,7 +44,7 @@ describe("updateSession", () => {
   });
 
   it("continues an authenticated visitor to a protected route", async () => {
-    mocks.getUser.mockResolvedValue({ data: { user: { id: "user-1" } }, error: null });
+    mocks.getClaims.mockResolvedValue({ data: { claims: { sub: "user-1" } }, error: null });
 
     const response = await updateSession(requestFor("/stats/week"));
 
@@ -53,7 +53,7 @@ describe("updateSession", () => {
   });
 
   it("propagates every refreshed cookie and its options on an authenticated continuing response", async () => {
-    mocks.getUser.mockImplementation(async () => {
+    mocks.getClaims.mockImplementation(async () => {
       mocks.setAll?.([
         {
           name: "sb-access-token",
@@ -66,7 +66,7 @@ describe("updateSession", () => {
           options: { httpOnly: true, path: "/", sameSite: "strict", secure: true },
         },
       ]);
-      return { data: { user: { id: "user-1" } }, error: null };
+      return { data: { claims: { sub: "user-1" } }, error: null };
     });
 
     const response = await updateSession(requestFor("/settings/profile"));
@@ -102,9 +102,9 @@ describe("updateSession", () => {
   });
 
   it("propagates refreshed Supabase cookies to redirect responses", async () => {
-    mocks.getUser.mockImplementation(async () => {
+    mocks.getClaims.mockImplementation(async () => {
       mocks.setAll?.([{ name: "sb-access-token", value: "refreshed", options: { httpOnly: true } }]);
-      return { data: { user: null }, error: null };
+      return { data: null, error: null };
     });
 
     const response = await updateSession(requestFor("/settings/profile"));

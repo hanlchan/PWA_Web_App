@@ -7,7 +7,6 @@ export default defineConfig([
   ...nextTs,
   globalIgnores([
     ".next/**",
-    ".netlify/**",
     ".npm-cache/**",
     ".superpowers/**",
     ".worktrees/**",

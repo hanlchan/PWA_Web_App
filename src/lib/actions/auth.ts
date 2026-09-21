@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { getPublicEnv } from "@/lib/env";
+import { getSiteUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from "@/lib/validation/auth";
 import type { ActionResult } from "./result";
@@ -37,9 +37,8 @@ export async function registerAction(_: ActionResult, formData: FormData): Promi
 export async function forgotPasswordAction(_: ActionResult, formData: FormData): Promise<ActionResult> {
   const parsed = forgotPasswordSchema.safeParse({ email: formData.get("email") });
   if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "请输入有效邮箱");
-  const { NEXT_PUBLIC_SITE_URL } = getPublicEnv();
   const { error } = await (await createClient()).auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${NEXT_PUBLIC_SITE_URL}/auth/callback?next=/reset-password`,
+    redirectTo: `${getSiteUrl()}/auth/callback?next=/reset-password`,
   });
   if (error) return failure("发送失败，请稍后重试");
   return { ok: true, data: undefined };
@@ -56,7 +55,8 @@ export async function resetPasswordAction(_: ActionResult, formData: FormData): 
   redirect("/login?reset=success");
 }
 
-export async function logoutAction() {
-  await (await createClient()).auth.signOut();
+export async function logoutAction(): Promise<ActionResult> {
+  const { error } = await (await createClient()).auth.signOut();
+  if (error) return failure("退出失败，请稍后重试");
   redirect("/login");
 }

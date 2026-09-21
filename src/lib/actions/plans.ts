@@ -37,9 +37,10 @@ async function persist(mode: "create" | "update", form: FormData): Promise<Actio
 
 export async function createPlanAction(_: ActionResult, form: FormData) { return persist("create", form); }
 export async function updatePlanAction(_: ActionResult, form: FormData) { return persist("update", form); }
-export async function deletePlanAction(form: FormData) {
+export async function deletePlanAction(form: FormData): Promise<ActionResult> {
   const id = String(form.get("planId") ?? "");
-  if (!id) return;
+  if (!id) return { ok: false, message: "计划编号无效" };
   const { error } = await (await createClient()).rpc("delete_workout_plan", { p_plan_id: id });
-  if (!error) { revalidatePath("/"); revalidatePath("/plans"); redirect("/plans"); }
+  if (error) return { ok: false, message: "删除计划失败，请稍后重试" };
+  revalidatePath("/"); revalidatePath("/plans"); redirect("/plans");
 }

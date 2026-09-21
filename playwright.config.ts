@@ -1,24 +1,27 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const executablePath = process.env.PLAYWRIGHT_EXECUTABLE_PATH;
+const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL;
 
 export default defineConfig({
   testDir: "./tests/e2e",
   testMatch: "**/*.spec.ts",
-  webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000/login",
-    reuseExistingServer: true,
-    env: {
-      NEXT_PUBLIC_SUPABASE_URL:
-        process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://project.supabase.co",
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
-        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "sb_publishable_playwright-test",
-      NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-    },
-  },
+  webServer: externalBaseURL
+    ? undefined
+    : {
+        command: "npm run dev",
+        url: "http://localhost:3000/login",
+        reuseExistingServer: true,
+        env: {
+          NEXT_PUBLIC_SUPABASE_URL:
+            process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://project.supabase.co",
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
+            process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "sb_publishable_playwright-test",
+          NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+        },
+      },
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: externalBaseURL ?? "http://localhost:3000",
     launchOptions: executablePath ? { executablePath } : undefined,
   },
   projects: [

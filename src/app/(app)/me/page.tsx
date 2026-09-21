@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { logoutAction } from "@/lib/actions/auth";
 import { getPrivateProfile } from "@/lib/queries/profile";
+import { ActionStateForm, PendingSubmitButton } from "@/components/forms/action-state-form";
 
 export default async function MePage() {
   const data = await getPrivateProfile();
@@ -28,9 +29,9 @@ export default async function MePage() {
       <Link href="/weight" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">体重与 BMI</Link>
       <Link href="/photos" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">我的变化照片</Link>
       <Link href="/notifications" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">通知中心</Link>
-      <form action={logoutAction} className="mt-4">
-        <button className="w-full rounded-2xl border border-slate-200 bg-white p-4 font-semibold text-slate-600">退出登录</button>
-      </form>
+      <ActionStateForm action={logoutAction} className="mt-4">
+        <PendingSubmitButton pendingLabel="退出中…" className="w-full rounded-2xl border border-slate-200 bg-white p-4 font-semibold text-slate-600 disabled:opacity-50">退出登录</PendingSubmitButton>
+      </ActionStateForm>
     </main>
   );
 }

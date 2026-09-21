@@ -1,6 +1,7 @@
 import { TrendChart } from "@/components/stats/trend-chart";
 import { createWeightEntryAction, deleteWeightEntryAction } from "@/lib/actions/weights";
 import { getPrivateWeightDashboard } from "@/lib/queries/weights";
+import { ActionStateForm, PendingSubmitButton } from "@/components/forms/action-state-form";
 
 const typeLabels = { morning: "晨间", evening: "晚间", custom: "自定义" } as const;
 
@@ -22,17 +23,17 @@ export default async function WeightPage() {
         <div className="mt-4"><TrendChart privateValues points={data.entries.map((entry) => ({ label: new Date(entry.measured_at).toLocaleDateString("zh-CN"), value: entry.weight_kg }))} /></div>
       </section>
 
-      <form action={createWeightEntryAction} className="mt-4 space-y-4 rounded-3xl bg-white p-5">
+      <ActionStateForm action={createWeightEntryAction} className="mt-4 space-y-4 rounded-3xl bg-white p-5">
         <h2 className="font-bold">新增记录</h2>
         <label className="block text-sm font-medium">体重 kg<input name="weightKg" type="number" min="20" max="500" step="0.01" required className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" /></label>
         <label className="block text-sm font-medium">记录时间<input name="measuredAt" type="datetime-local" required defaultValue={localDefault} className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" /></label>
         <label className="block text-sm font-medium">记录类型<select name="measurementType" defaultValue="custom" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3"><option value="morning">晨间</option><option value="evening">晚间</option><option value="custom">自定义</option></select></label>
-        <button className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-bold text-white">保存体重</button>
-      </form>
+        <PendingSubmitButton pendingLabel="保存中…" className="w-full rounded-xl bg-emerald-500 px-4 py-3 font-bold text-white disabled:opacity-50">保存体重</PendingSubmitButton>
+      </ActionStateForm>
 
       <section className="mt-6 space-y-2">
         <h2 className="font-bold">历史记录</h2>
-        {[...data.entries].reverse().map((entry) => <article key={entry.id} className="flex items-center justify-between rounded-2xl bg-white p-4"><div><p className="font-bold">{entry.weight_kg} kg</p><p className="text-xs text-slate-500">{new Date(entry.measured_at).toLocaleString("zh-CN")} · {typeLabels[entry.measurement_type]}{entry.bmi != null ? ` · BMI ${entry.bmi}` : ""}</p></div><form action={deleteWeightEntryAction}><input type="hidden" name="entryId" value={entry.id}/><button className="min-h-11 px-3 text-sm text-rose-600">删除</button></form></article>)}
+        {[...data.entries].reverse().map((entry) => <article key={entry.id} className="flex items-center justify-between rounded-2xl bg-white p-4"><div><p className="font-bold">{entry.weight_kg} kg</p><p className="text-xs text-slate-500">{new Date(entry.measured_at).toLocaleString("zh-CN")} · {typeLabels[entry.measurement_type]}{entry.bmi != null ? ` · BMI ${entry.bmi}` : ""}</p></div><ActionStateForm action={deleteWeightEntryAction}><input type="hidden" name="entryId" value={entry.id}/><PendingSubmitButton pendingLabel="删除中…" className="min-h-11 px-3 text-sm text-rose-600 disabled:opacity-50">删除</PendingSubmitButton></ActionStateForm></article>)}
       </section>
     </main>
   );

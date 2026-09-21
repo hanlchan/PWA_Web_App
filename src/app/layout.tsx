@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: "运动打卡",
   description: "制定运动计划，记录每日打卡进度。",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icons/icon-192.svg",
+    apple: "/icons/icon-192.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

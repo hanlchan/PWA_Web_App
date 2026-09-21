@@ -9,6 +9,12 @@ export function ServiceWorkerRegistration() {
     const register = () => {
       void navigator.serviceWorker.register("/sw.js", { scope: "/" });
     };
+
+    if (document.readyState === "complete") {
+      register();
+      return;
+    }
+
     window.addEventListener("load", register, { once: true });
     return () => window.removeEventListener("load", register);
   }, []);

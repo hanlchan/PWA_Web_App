@@ -7,6 +7,8 @@ export default defineConfig([
   ...nextTs,
   globalIgnores([
     ".next/**",
+    ".cloudbase-build/**",
+    ".migration-work/**",
     ".npm-cache/**",
     ".superpowers/**",
     ".worktrees/**",
@@ -18,4 +20,10 @@ export default defineConfig([
     "supabase/functions/**",
     "next-env.d.ts",
   ]),
+  {
+    files: ["cloudfunctions/**/*.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ]);

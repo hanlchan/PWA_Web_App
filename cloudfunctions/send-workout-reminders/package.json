@@ -1,0 +1,9 @@
+{
+  "name": "send-workout-reminders",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "web-push": "3.6.7"
+  }
+}

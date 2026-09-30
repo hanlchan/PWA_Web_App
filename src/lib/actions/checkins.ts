@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { isValidIsoDate } from "@/lib/calendar/date";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/cloudbase/server";
 import { checkinDetailsSchema } from "@/lib/validation/checkin";
 import type { ActionResult } from "./result";
 

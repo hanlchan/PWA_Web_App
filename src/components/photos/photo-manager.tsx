@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { createProgressPhotoAction, deleteProgressPhotoAction, updateProgressPhotoVisibilityAction } from "@/lib/actions/photos";
 import { prepareProgressPhoto } from "@/lib/images/progress-photo";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/cloudbase/client";
 import { PHOTO_BUCKET, validatePhotoFile } from "@/lib/validation/photo";
 
 type Photo = {
@@ -40,19 +40,19 @@ export function PhotoManager({
     if (validationError) return setMessage(validationError);
 
     startTransition(async () => {
-      const supabase = createClient();
+      const cloudbase = createClient();
       let storagePath: string | null = null;
       try {
         setMessage("正在压缩并清除照片位置等元数据…");
         const prepared = await prepareProgressPhoto(source);
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error("登录已失效，请重新登录");
+        const { data: { session } } = await cloudbase.auth.getSession();
+        if (!session?.user) throw new Error("登录已失效，请重新登录");
         const extension = prepared.type === "image/webp" ? "webp" : "png";
-        storagePath = `${user.id}/${crypto.randomUUID()}.${extension}`;
-        const { error: uploadError } = await supabase.storage
+        storagePath = `${session.user.id}/${crypto.randomUUID()}.${extension}`;
+        const { error: uploadError } = await cloudbase.storage
           .from(PHOTO_BUCKET)
           .upload(storagePath, prepared, { contentType: prepared.type, upsert: false });
-        if (uploadError) throw new Error("照片上传失败，请稍后重试");
+        if (uploadError) throw new Error(uploadError.message);
 
         const result = await createProgressPhotoAction({
           storagePath,
@@ -65,7 +65,7 @@ export function PhotoManager({
         setMessage("照片已保存");
         router.refresh();
       } catch (error) {
-        if (storagePath) await supabase.storage.from(PHOTO_BUCKET).remove([storagePath]);
+        if (storagePath) await cloudbase.storage.from(PHOTO_BUCKET).remove([storagePath]);
         setMessage(error instanceof Error ? error.message : "照片保存失败");
       }
     });

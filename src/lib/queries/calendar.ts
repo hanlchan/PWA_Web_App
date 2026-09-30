@@ -1,5 +1,5 @@
 import { getDateInTimeZone, isInBackfillWindow } from "@/lib/calendar/date";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/cloudbase/server";
 
 export type CalendarDay = {
   date: string;

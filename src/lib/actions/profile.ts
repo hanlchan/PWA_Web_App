@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/cloudbase/server";
 import { profileSchema } from "@/lib/validation/profile";
 import type { ActionResult } from "./result";
 

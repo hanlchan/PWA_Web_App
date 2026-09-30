@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createStorageClient } from "@/lib/cloudbase/server";
 import { PHOTO_BUCKET } from "@/lib/validation/photo";
 
 export type ProgressPhoto = {
@@ -17,12 +17,12 @@ type PhotoMetadata = Omit<ProgressPhoto, "signed_url">;
 
 async function attachSignedUrls(photos: PhotoMetadata[]) {
   if (photos.length === 0) return [];
-  const supabase = await createClient();
-  const { data, error } = await supabase.storage
+  const storage = await createStorageClient();
+  const { data, error } = await storage
     .from(PHOTO_BUCKET)
     .createSignedUrls(photos.map((photo) => photo.storage_path), 600);
   if (error) throw new Error("无法生成照片临时访问地址");
-  const urls = new Map((data ?? []).map((item) => [item.path, item.signedUrl ?? null]));
+  const urls = new Map((data ?? []).map((item) => [item.path, item.fullSignedURL ?? null]));
   return photos.map((photo) => ({ ...photo, signed_url: urls.get(photo.storage_path) ?? null }));
 }
 

@@ -6,6 +6,7 @@ import { PublicPhotoGrid } from "@/components/photos/public-photo-grid";
 import { TrendChart } from "@/components/stats/trend-chart";
 import { getPublicProgressPhotos } from "@/lib/queries/photos";
 import { getPublicProfile } from "@/lib/queries/public-profile";
+import { getPublicStorageUrl } from "@/lib/cloudbase/server";
 import { getPublicWeightTrend } from "@/lib/queries/weights";
 
 export default async function PublicProfilePage({
@@ -24,7 +25,7 @@ export default async function PublicProfilePage({
   if (!profile) notFound();
 
   const avatar = profile.avatar_path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${profile.avatar_path}`
+    ? getPublicStorageUrl("avatars", profile.avatar_path)
     : null;
   const entries = profile.checkin_dates.map((scheduled_date) => ({
     scheduled_date,

@@ -3,9 +3,12 @@
 node_modules/
 .npm-cache/
 .npm-cache/
+config/mcporter.json
 *.tsbuildinfo
 .next/
 .vercel/
+.migration-work/
+.cloudbase-build/
 coverage/
 playwright-report/
 test-results/

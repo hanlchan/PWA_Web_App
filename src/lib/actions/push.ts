@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/cloudbase/server";
 import { pushSubscriptionSchema } from "@/lib/validation/push";
 import type { ActionResult } from "./result";
 

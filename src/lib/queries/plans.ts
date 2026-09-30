@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/cloudbase/server";
 
 export async function listPlans() {
   const { data, error } = await (await createClient()).from("workout_plans").select("*").is("deleted_at", null).order("created_at", { ascending: false });

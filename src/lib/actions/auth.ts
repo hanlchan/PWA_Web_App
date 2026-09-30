@@ -1,62 +1,67 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { getSiteUrl } from "@/lib/site-url";
-import { createClient } from "@/lib/supabase/server";
-import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from "@/lib/validation/auth";
+
+import {
+  ACCESS_TOKEN_COOKIE,
+  DEVICE_ID_COOKIE,
+  EXPIRES_AT_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+  sessionCookieOptions,
+} from "@/lib/cloudbase/cookies";
+import { hasExpectedRlsClaims } from "@/lib/cloudbase/session-token";
+import { getPublicEnv } from "@/lib/env";
 import type { ActionResult } from "./result";
 
-const failure = (message: string): ActionResult => ({ ok: false, message });
+type BrowserSession = {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  deviceId?: string;
+};
 
-export async function loginAction(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  const parsed = loginSchema.safeParse({ email: formData.get("email"), password: formData.get("password") });
-  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "请检查输入");
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return failure("邮箱或密码不正确");
-  const { data: profile } = await supabase.from("profiles").select("id").maybeSingle();
-  redirect(profile ? "/" : "/onboarding");
-}
+export async function syncSessionAction(session: BrowserSession): Promise<ActionResult> {
+  if (!hasExpectedRlsClaims(session.accessToken) || !session.refreshToken
+    || !Number.isFinite(session.expiresIn) || session.expiresIn <= 0) {
+    return { ok: false, message: "CloudBase 会话不完整" };
+  }
 
-export async function registerAction(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  const parsed = registerSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword"),
+  const environment = getPublicEnv();
+  const origin = `https://${environment.NEXT_PUBLIC_CLOUDBASE_ENV_ID}.api.tcloudbasegateway.com`;
+  const response = await fetch(`${origin}/auth/v1/user/me`, {
+    headers: {
+      Authorization: `Bearer ${session.accessToken}`,
+      ...(session.deviceId ? { "x-device-id": session.deviceId } : {}),
+    },
+    cache: "no-store",
   });
-  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "请检查输入");
-  const { data, error } = await (await createClient()).auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-  });
-  if (error) return failure(error.message.includes("registered") ? "该邮箱已注册" : "注册失败，请稍后重试");
-  if (!data.session) return { ok: true, data: undefined };
-  redirect("/onboarding");
-}
+  if (!response.ok) return { ok: false, message: "CloudBase 会话验证失败" };
 
-export async function forgotPasswordAction(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  const parsed = forgotPasswordSchema.safeParse({ email: formData.get("email") });
-  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "请输入有效邮箱");
-  const { error } = await (await createClient()).auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${getSiteUrl()}/auth/callback?next=/reset-password`,
+  const cookieStore = await cookies();
+  const expiresAt = Date.now() + session.expiresIn * 1000;
+  cookieStore.set(ACCESS_TOKEN_COOKIE, session.accessToken, { ...sessionCookieOptions, expires: new Date(expiresAt) });
+  cookieStore.set(REFRESH_TOKEN_COOKIE, session.refreshToken, {
+    ...sessionCookieOptions,
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   });
-  if (error) return failure("发送失败，请稍后重试");
+  cookieStore.set(EXPIRES_AT_COOKIE, String(expiresAt), { ...sessionCookieOptions, expires: new Date(expiresAt) });
+  if (session.deviceId) {
+    cookieStore.set(DEVICE_ID_COOKIE, session.deviceId, {
+      ...sessionCookieOptions,
+      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+    });
+  }
   return { ok: true, data: undefined };
 }
 
-export async function resetPasswordAction(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  const parsed = resetPasswordSchema.safeParse({
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword"),
-  });
-  if (!parsed.success) return failure(parsed.error.issues[0]?.message ?? "请检查输入");
-  const { error } = await (await createClient()).auth.updateUser({ password: parsed.data.password });
-  if (error) return failure("密码更新失败，请重新打开邮件链接");
-  redirect("/login?reset=success");
+export async function clearSessionAction(): Promise<ActionResult> {
+  const cookieStore = await cookies();
+  for (const name of [ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, EXPIRES_AT_COOKIE]) cookieStore.delete(name);
+  return { ok: true, data: undefined };
 }
 
 export async function logoutAction(): Promise<ActionResult> {
-  const { error } = await (await createClient()).auth.signOut();
-  if (error) return failure("退出失败，请稍后重试");
+  await clearSessionAction();
   redirect("/login");
 }

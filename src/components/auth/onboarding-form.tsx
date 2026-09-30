@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { completeProfileAction } from "@/lib/actions/profile";
 import { prepareAvatar } from "@/lib/images/avatar";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/cloudbase/client";
 
 export function OnboardingForm() {
   const [message, setMessage] = useState("");
@@ -17,12 +17,12 @@ export function OnboardingForm() {
         const avatar = form.get("avatar");
         if (avatar instanceof File && avatar.size) {
           const prepared = await prepareAvatar(avatar);
-          const supabase = createClient();
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) throw new Error("登录已失效");
-          avatarPath = `${user.id}/avatar-${crypto.randomUUID()}.webp`;
-          const { error } = await supabase.storage.from("avatars").upload(avatarPath, prepared, { contentType: "image/webp" });
-          if (error) throw new Error("头像上传失败");
+          const cloudbase = createClient();
+          const { data: { session } } = await cloudbase.auth.getSession();
+          if (!session?.user) throw new Error("登录已失效");
+          avatarPath = `${session.user.id}/avatar-${crypto.randomUUID()}.webp`;
+          const { error } = await cloudbase.storage.from("avatars").upload(avatarPath, prepared, { contentType: "image/webp" });
+          if (error) throw new Error(error.message);
         }
         const result = await completeProfileAction({ username: form.get("username"), displayName: form.get("displayName"), heightCm: form.get("heightCm"), timezone: form.get("timezone"), avatarPath });
         if (!result.ok) { if (avatarPath) await createClient().storage.from("avatars").remove([avatarPath]); setMessage(result.message); }

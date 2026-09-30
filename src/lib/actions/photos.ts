@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createStorageClient } from "@/lib/cloudbase/server";
 import { PHOTO_BUCKET, progressPhotoRecordSchema } from "@/lib/validation/photo";
 import type { ActionResult } from "./result";
 
@@ -15,11 +15,11 @@ export async function createProgressPhotoAction(input: unknown): Promise<ActionR
   if (!user) return { ok: false, message: "登录已失效" };
   if (!parsed.data.storagePath.startsWith(`${user.id}/`)) return { ok: false, message: "照片路径与当前用户不匹配" };
 
-  const filename = parsed.data.storagePath.slice(user.id.length + 1);
-  const { data: uploaded, error: storageError } = await supabase.storage
+  const storage = await createStorageClient();
+  const { data: uploaded, error: storageError } = await storage
     .from(PHOTO_BUCKET)
-    .list(user.id, { limit: 2, search: filename });
-  if (storageError || !uploaded?.some((object) => object.name === filename)) {
+    .info(parsed.data.storagePath);
+  if (storageError || !uploaded) {
     return { ok: false, message: "找不到已上传的照片文件" };
   }
 
@@ -51,7 +51,8 @@ export async function deleteProgressPhotoAction(photoId: string): Promise<Action
     .maybeSingle();
   if (readError || !photo) return { ok: false, message: "照片不存在或无权删除" };
 
-  const { error: storageError } = await supabase.storage.from(PHOTO_BUCKET).remove([photo.storage_path]);
+  const storage = await createStorageClient();
+  const { error: storageError } = await storage.from(PHOTO_BUCKET).remove([photo.storage_path]);
   if (storageError) return { ok: false, message: "照片文件删除失败，请稍后重试" };
   const { error: rowError } = await supabase.from("progress_photos").delete().eq("id", photoId).eq("user_id", user.id);
   if (rowError) return { ok: false, message: "照片记录删除失败，请稍后重试" };

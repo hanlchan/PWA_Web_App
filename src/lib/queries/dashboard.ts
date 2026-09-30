@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/cloudbase/server";
 
 export type Dashboard = { today:string; has_active_plans:boolean; today_occurrences:Array<{id:string;title:string;description:string|null;duration_minutes:number|null;scheduled_time:string|null;status:string}>; today_checkins:Array<{id:string;occurrence_id:string|null;checkin_date:string;duration_minutes:number|null}>; total_checkin_days:number; current_streak:number; unread_notifications:number };
 

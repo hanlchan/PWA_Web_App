@@ -1,5 +1,5 @@
 import "server-only";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/cloudbase/server";
 import { userSearchSchema } from "@/lib/validation/social";
 
 export type SearchUser = { id: string; username: string; display_name: string; avatar_path: string | null; is_following: boolean };

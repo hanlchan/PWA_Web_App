@@ -6,22 +6,23 @@ import { describe, expect, it } from "vitest";
 import { parsePublicEnv } from "./env";
 
 const validPublicEnv = {
-  NEXT_PUBLIC_SUPABASE_URL: "https://project.supabase.co",
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_test-value",
+  NEXT_PUBLIC_CLOUDBASE_ENV_ID: "pwa-web-app-test",
+  NEXT_PUBLIC_CLOUDBASE_REGION: "ap-shanghai",
+  NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY: "publishable-test-value",
   NEXT_PUBLIC_SITE_URL: "https://workout.example.com",
 };
 
 describe("parsePublicEnv", () => {
-  it("rejects missing Supabase public values", () => {
+  it("rejects missing CloudBase public values", () => {
     expect(() => parsePublicEnv({ NEXT_PUBLIC_SITE_URL: validPublicEnv.NEXT_PUBLIC_SITE_URL })).toThrow();
   });
 
-  it("rejects invalid Supabase URL and non-publishable key", () => {
+  it("rejects empty CloudBase environment values", () => {
     expect(() =>
       parsePublicEnv({
         ...validPublicEnv,
-        NEXT_PUBLIC_SUPABASE_URL: "not-a-url",
-        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "legacy-or-invalid-key",
+        NEXT_PUBLIC_CLOUDBASE_ENV_ID: "",
+        NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY: "",
       }),
     ).toThrow();
   });
@@ -32,8 +33,9 @@ describe("parsePublicEnv", () => {
 
   it("uses localhost as the site URL when it is omitted", () => {
     const withoutSiteUrl = {
-      NEXT_PUBLIC_SUPABASE_URL: validPublicEnv.NEXT_PUBLIC_SUPABASE_URL,
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: validPublicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+      NEXT_PUBLIC_CLOUDBASE_ENV_ID: validPublicEnv.NEXT_PUBLIC_CLOUDBASE_ENV_ID,
+      NEXT_PUBLIC_CLOUDBASE_REGION: validPublicEnv.NEXT_PUBLIC_CLOUDBASE_REGION,
+      NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY: validPublicEnv.NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY,
     };
 
     expect(parsePublicEnv(withoutSiteUrl)).toEqual({
@@ -45,8 +47,8 @@ describe("parsePublicEnv", () => {
   it("reads runtime public values through direct process environment accesses", () => {
     const source = readFileSync(resolve(process.cwd(), "src/lib/env.ts"), "utf8");
 
-    expect(source).toContain("NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL");
-    expect(source).toContain("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
+    expect(source).toContain("NEXT_PUBLIC_CLOUDBASE_ENV_ID: process.env.NEXT_PUBLIC_CLOUDBASE_ENV_ID");
+    expect(source).toContain("NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY");
     expect(source).toContain("NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL");
   });
 });

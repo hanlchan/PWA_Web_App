@@ -1,16 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { logoutAction } from "@/lib/actions/auth";
 import { getPrivateProfile } from "@/lib/queries/profile";
-import { ActionStateForm, PendingSubmitButton } from "@/components/forms/action-state-form";
+import { getPublicStorageUrl } from "@/lib/cloudbase/server";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 export default async function MePage() {
   const data = await getPrivateProfile();
   if (!data) return null;
 
   const avatar = data.profile.avatar_path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${data.profile.avatar_path}`
+    ? getPublicStorageUrl("avatars", data.profile.avatar_path)
     : null;
 
   return (
@@ -29,9 +29,7 @@ export default async function MePage() {
       <Link href="/weight" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">体重与 BMI</Link>
       <Link href="/photos" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">我的变化照片</Link>
       <Link href="/notifications" className="mt-3 block rounded-2xl bg-white p-4 font-semibold">通知中心</Link>
-      <ActionStateForm action={logoutAction} className="mt-4">
-        <PendingSubmitButton pendingLabel="退出中…" className="w-full rounded-2xl border border-slate-200 bg-white p-4 font-semibold text-slate-600 disabled:opacity-50">退出登录</PendingSubmitButton>
-      </ActionStateForm>
+      <LogoutButton />
     </main>
   );
 }

@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 const executablePath = process.env.PLAYWRIGHT_EXECUTABLE_PATH;
 const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const disableProxy = process.env.PLAYWRIGHT_DISABLE_PROXY === "1";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -13,16 +14,23 @@ export default defineConfig({
         url: "http://localhost:3000/login",
         reuseExistingServer: true,
         env: {
-          NEXT_PUBLIC_SUPABASE_URL:
-            process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://project.supabase.co",
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
-            process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "sb_publishable_playwright-test",
+          NEXT_PUBLIC_CLOUDBASE_ENV_ID:
+            process.env.NEXT_PUBLIC_CLOUDBASE_ENV_ID ?? "pwa-web-app-test",
+          NEXT_PUBLIC_CLOUDBASE_REGION:
+            process.env.NEXT_PUBLIC_CLOUDBASE_REGION ?? "ap-shanghai",
+          NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY:
+            process.env.NEXT_PUBLIC_CLOUDBASE_PUBLISHABLE_KEY ?? "publishable-playwright-test",
           NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
         },
       },
   use: {
     baseURL: externalBaseURL ?? "http://localhost:3000",
-    launchOptions: executablePath ? { executablePath } : undefined,
+    launchOptions: executablePath || disableProxy
+      ? {
+          executablePath,
+          args: disableProxy ? ["--no-proxy-server"] : undefined,
+        }
+      : undefined,
   },
   projects: [
     { name: "desktop-chromium", use: { ...devices["Desktop Chrome"] } },

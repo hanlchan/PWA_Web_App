@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
-import { getVerifiedUserId } from "@/lib/supabase/auth";
-import { createClient } from "@/lib/supabase/server";
+import { getVerifiedUserId } from "@/lib/cloudbase/auth";
+import { createClient } from "@/lib/cloudbase/server";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const userId = await getVerifiedUserId();

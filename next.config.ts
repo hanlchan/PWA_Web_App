@@ -9,6 +9,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  output: "standalone",
+  images: { unoptimized: true },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
